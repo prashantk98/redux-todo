@@ -1,25 +1,24 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
-function TodoForm(props) {
-  const [input, setInput] = useState(props.edit ? props.edit.value : "");
+function TodoForm(props: { edit?: { id: null | string; value: string } ,onSubmit: (input:string)=>void}) {
+  const [input, setInput] = useState<string>(
+    props.edit ? props.edit.value : ""
+  );
 
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    inputRef.current.focus();
+    inputRef?.current?.focus();
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    props.onSubmit({
-      id: Math.floor(Math.random() * 10000),
-      text: input,
-    });
+    props.onSubmit(input);
     setInput("");
   };
 
@@ -35,7 +34,11 @@ function TodoForm(props) {
             ref={inputRef}
             className="todo-input edit"
           />
-          <button onClick={handleSubmit} className="todo-button edit">
+          <button
+            type="submit"
+            onClick={() => handleSubmit}
+            className="todo-button edit"
+          >
             Update
           </button>
         </>
@@ -49,7 +52,7 @@ function TodoForm(props) {
             className="todo-input"
             ref={inputRef}
           />
-          <button onClick={handleSubmit} className="todo-button">
+          <button type="submit" onClick={()=>handleSubmit} className="todo-button">
             Add todo
           </button>
         </>

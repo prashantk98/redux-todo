@@ -1,16 +1,27 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import TodoForm from "./TodoForm";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { TiEdit } from "react-icons/ti";
+import { TodoListType } from "../reducers/todoSlice";
 
-const Todo = ({ todos, completeTodo, removeTodo, updateTodo }) => {
-  const [edit, setEdit] = useState({
+const Todo = ({
+  todos,
+  completeTodo,
+  removeTodo,
+  updateTodo,
+}: {
+  todos: TodoListType[];
+  completeTodo: (id:string)=>void;
+  removeTodo: (id: string)=>void;
+  updateTodo: (id: string, newValue:string)=>void;
+}) => {
+  const [edit, setEdit] = useState<{id:null|string, value: string}>({
     id: null,
     value: "",
   });
 
-  const submitUpdate = (value) => {
-    updateTodo(edit.id, value);
+  const submitUpdate = (value:string) => {
+    updateTodo(edit.id!, value);
     setEdit({
       id: null,
       value: "",
@@ -25,8 +36,9 @@ const Todo = ({ todos, completeTodo, removeTodo, updateTodo }) => {
     <div
       className={todo.isComplete ? "todo-row complete" : "todo-row"}
       key={index}
+      onClick={() => completeTodo(todo.id)}
     >
-      <div key={todo.id} onClick={() => completeTodo(todo.id)}>
+      <div >
         {todo.text}
       </div>
       <div className="icons">

@@ -1,55 +1,48 @@
-import React, { useState } from "react";
 import TodoForm from "./TodoForm";
 import Todo from "./Todo";
+import { useDispatch, useSelector } from "react-redux";
+import { addTodo, editTodo, removeTodo, toggleComplete } from "../reducers/todoSlice";
+import { RootState } from "../store/store";
 
 function TodoList() {
-  const [todos, setTodos] = useState([]);
+  const todos = useSelector((state: RootState) => state.todoSliceReducer);
+  const dispatch = useDispatch();
 
-  const addTodo = (todo) => {
-    if (!todo.text || /^\s*$/.test(todo.text)) {
+  console.log(todos);
+  
+  const addTodoFn = (todo:string) => {
+    if (!todo || /^\s*$/.test(todo)) {
       return;
     }
 
-    const newTodos = [todo, ...todos];
+    dispatch(addTodo(todo))
 
-    setTodos(newTodos);
-    console.log(...todos);
   };
 
-  const updateTodo = (todoId, newValue) => {
-    if (!newValue.text || /^\s*$/.test(newValue.text)) {
+  const updateTodo = (todoId:string, newValue:string) => {
+    if (!newValue || /^\s*$/.test(newValue)) {
       return;
     }
-
-    setTodos((prev) =>
-      prev.map((item) => (item.id === todoId ? newValue : item))
-    );
+    
+    dispatch(editTodo({id: todoId, newValue}))
   };
 
-  const removeTodo = (id) => {
-    const removedArr = [...todos].filter((todo) => todo.id !== id);
-
-    setTodos(removedArr);
+  const removeTodoFn = (id:string) => {
+    dispatch(removeTodo({id}))
   };
 
-  const completeTodo = (id) => {
-    let updatedTodos = todos.map((todo) => {
-      if (todo.id === id) {
-        todo.isComplete = !todo.isComplete;
-      }
-      return todo;
-    });
-    setTodos(updatedTodos);
+  const completeTodo = (id:string) => {
+    dispatch(toggleComplete({id}))
   };
 
   return (
     <>
       <h1>What's the Plan for Today?</h1>
-      <TodoForm onSubmit={addTodo} />
+      <TodoForm onSubmit={addTodoFn} />
       <Todo
         todos={todos}
         completeTodo={completeTodo}
-        removeTodo={removeTodo}
+        removeTodo={removeTodoFn}
         updateTodo={updateTodo}
       />
     </>
